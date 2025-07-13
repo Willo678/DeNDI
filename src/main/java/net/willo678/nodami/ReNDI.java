@@ -1,9 +1,8 @@
-package net.profhugo.nodami;
+package net.willo678.nodami;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.fml.config.ModConfig;
@@ -20,17 +19,17 @@ public class ReNDI
 
 	public static IEventBus bus;
 
-	public ReNDI()
+	public ReNDI(FMLJavaModLoadingContext context)
 	{
-		bus = FMLJavaModLoadingContext.get().getModEventBus();
-		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+		bus = context.getModEventBus();
+		context.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
 	@SubscribeEvent
 	public void onServerStarting(ServerStartingEvent event)
 	{
-		LOGGER.info("ndiupdated: Serverside operations started.");
+		LOGGER.info("ndiDowngraded: Serverside operations started.");
 		Config.cacheValues();
 		bus.register(new Config());
 	}

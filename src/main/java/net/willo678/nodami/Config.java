@@ -1,4 +1,4 @@
-package net.profhugo.nodami;
+package net.willo678.nodami;
 
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.SubscribeEvent;

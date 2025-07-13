@@ -1,4 +1,4 @@
-package net.profhugo.nodami;
+package net.willo678.nodami;
 
 //import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -22,12 +22,14 @@ public class Handler {
 	public static void onEntityHurt(LivingHurtEvent event) {
 		if (!event.isCanceled()) {
 			LivingEntity entity = event.getEntity();
-			if (entity.level().isClientSide()) {
+			if (entity.getLevel().isClientSide()) {
 				return;
 			}
+
 			DamageSource source = event.getSource();
 			Entity trueSource = source.getDirectEntity();
-			ResourceLocation trueSourceloc = trueSource != null ? EntityType.getKey(trueSource.getType()) : null;
+			ResourceLocation trueSourceLoc = trueSource != null ? EntityType.getKey(trueSource.getType()) : null;
+
 			if (Config.CORE.excludePlayers && entity instanceof Player) {
 				return;
 			}
@@ -46,7 +48,7 @@ public class Handler {
 			}
 
 			if (trueSource != null) {
-				if (Config.EXCLUSIONS.attackExcludedEntities.contains(trueSourceloc.toString())) {
+				if (Config.EXCLUSIONS.attackExcludedEntities.contains(trueSourceLoc.toString())) {
 					return;
 				}
 
@@ -59,11 +61,8 @@ public class Handler {
 	public static void onPlayerAttack(AttackEntityEvent event) {
 		if (!event.isCanceled()) {
 			Player player = event.getEntity();
-			if (player.level().isClientSide()) {
-				return;
-			}
 
-			if (player instanceof FakePlayer) {
+			if (player.getLevel().isClientSide() || player instanceof FakePlayer) {
 				return;
 			}
 
@@ -76,8 +75,8 @@ public class Handler {
 			if (str <= Config.THRESHOLDS.knockbackCancelThreshold) {
 				Entity target = event.getTarget();
 				// Don't worry, it's only magic
-				if (target instanceof LivingEntity) {
-					((LivingEntity)target).swinging = true;
+				if (target instanceof LivingEntity livingEntity) {
+					livingEntity.swinging = true;
 				}
 
 			}
@@ -95,6 +94,5 @@ public class Handler {
 			}
 
 		}
-
 	}
 }
