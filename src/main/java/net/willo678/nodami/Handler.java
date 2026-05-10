@@ -28,13 +28,13 @@ public class Handler {
 
         // Exclude if damage source is on 'damageSrcWhitelist'
         DamageSource source = event.getEntity().getLastDamageSource();
-        if (source != null && Config.EXCLUSIONS.damageSrcWhitelist.contains(source.getMsgId())) {
+        if (source != null && Config.EXCLUSIONS.excludedEnvironmentalSources.contains(source.getMsgId())) {
             return;
         }
 
         // Exclude if damage recipient is on 'damageReceiveExcludedEntities'
         ResourceLocation recipientLoc = EntityType.getKey(recipient.getType());
-        if (Config.EXCLUSIONS.dmgReceiveExcludedEntities.contains(recipientLoc.toString())) {
+        if (Config.EXCLUSIONS.iFrameRequiredEntities.contains(recipientLoc.toString())) {
             return;
         }
 

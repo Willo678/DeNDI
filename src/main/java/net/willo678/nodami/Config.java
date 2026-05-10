@@ -31,19 +31,29 @@ public class Config {
         public boolean excludePlayers, excludeAllMobs;
 
         Core(ModConfigSpec.Builder builder) {
-            builder.comment("Core functionality settings").push("core");
-
-            iFrameIntervalTemp = builder.comment(
-                            "How many ticks of i-frames does an entity get when damaged, from 0 (default), to 2^31-1 (nothing can take damage)")
+            iFrameIntervalTemp = builder
+                    .comment("""
+                            How many ticks of i-frames does an entity get when damaged
+                              - Zero means no i-frames
+                              - Super duper high values will mean that nothing can take damage
+                            """)
                     .defineInRange("iFrameInterval", 0, 0, Integer.MAX_VALUE);
-            excludePlayersTemp = builder.comment(
-                            "Are players excluded from this mod (if true, players will always get 10 ticks of i-frames on being damaged")
-                    .define("excludePlayers", false);
-            excludeAllMobsTemp = builder.comment(
-                            "Are players excluded from this mod (if true, players will always get 10 ticks of i-frames on being damaged")
-                    .define("excludeAllMobs", false);
 
-            builder.pop();
+            excludePlayersTemp = builder
+                    .comment("""
+                            Are players excluded from this mod?
+                              - If true, players will always get 10 ticks of i-frames on being damaged
+                              - If false, players will get i-frames specified in the iFrameInterval setting
+                            """)
+                    .define("excludePlayers", false);
+
+            excludeAllMobsTemp = builder
+                    .comment("""
+                            Are mobs excluded from this mod
+                              - If true, mobs will always get 10 ticks of i-frames on being damaged
+                              - If false, mobs will get i-frames specified in the iFrameInterval setting
+                            """)
+                    .define("excludeAllMobs", false);
         }
     }
 
@@ -52,13 +62,23 @@ public class Config {
         public double attackCancelThreshold, knockbackCancelThreshold;
 
         public Thresholds(ModConfigSpec.Builder builder) {
-            builder.comment("Threshold values for certain features").push("threshold");
+            builder.comment("Threshold values for damage and knockback").push("threshold");
 
-            attackCancelThresholdTemp = builder.comment(
-                            "How weak a player's attack can be before it gets nullified, from 0 (0%, cancels multiple attacks on the same tick) to 1 (100%, players cannot attack), or -0.1 (disables this feature)")
+            attackCancelThresholdTemp = builder
+                    .comment("""
+                            Charge threshold a player's attack must possess, else it gets nullified.
+                              - Ranges from 0 (0%, cancels multiple attacks on the same tick) to 1 (100%, players cannot attack)
+                              - Negative values disable this feature.
+                            """)
+                    .comment()
                     .defineInRange("attackCancelThreshold", 0.1, -0.1, 1);
-            knockbackCancelThresholdTemp = builder.comment(
-                            "How weak a player's attack can be before the knockback gets nullified, from 0 (0%, cancels multiple attacks on the same tick) to 1 (100%, no knockback), or -0.1 (disables this feature)")
+
+            knockbackCancelThresholdTemp = builder
+                    .comment("""
+                            Charge threshold a player's attack must possess, else the knockback gets nullified.
+                              - Ranges from 0 (0%, cancels multiple attacks on the same tick) to 1 (100%, no knockback)
+                              - Negative values disable this feature.
+                            """)
                     .defineInRange("knockbackCancelThreshold", 0.75, -0.1, 1);
 
             builder.pop();
@@ -66,30 +86,39 @@ public class Config {
     }
 
     public static class Exclusions {
-        public final ModConfigSpec.ConfigValue<List<? extends String>> attackExcludedEntitiesTemp, dmgReceiveExcludedEntitiesTemp,
-                damageSrcWhitelistTemp;
+        public final ModConfigSpec.ConfigValue<List<? extends String>>
+                attackExcludedEntitiesTemp, iFrameRequiredEntitiesTemp, excludedEnvironmentalSourcesTemp;
 
-        public HashSet<String> attackExcludedEntities, dmgReceiveExcludedEntities, damageSrcWhitelist;
+        public HashSet<String> attackExcludedEntities, iFrameRequiredEntities, excludedEnvironmentalSources;
 
         public Exclusions(ModConfigSpec.Builder builder) {
             List<String> AtkExcEnt = Arrays.asList("minecraft:slime", "minecraft:magma_cube", "tconstruct:earth_slime", "tconstruct:sky_slime", "tconstruct:ender_slime", "tconstruct:terracube", "twilightforest:maze_slime");
             List<String> DmgRecExcEnt = List.of();
             List<String> DmgSrcWhtLst = Arrays.asList("inFire", "lava", "sweetBerryBush", "cactus", "lightningBolt", "inWall", "hotFloor", "outOfWorld");
-            builder.comment("Exclusion lists for certain features").push("exclusions");
+            builder.comment("Exclusion lists for damage sources and recipients").push("exclusions");
 
             Predicate<Object> dummyPredicate = t -> true;
 
             attackExcludedEntitiesTemp = builder
-                    .comment("List of entities that need to give i-frames on attacking")
-                    .define("attackExcludedEntities", AtkExcEnt, dummyPredicate);
+                    .comment("""
+                            List of entities that should give i-frames on attacking
+                              - e.g. Slimes, both vanilla and modded
+                            """)
+                    .defineList("attackExcludedEntities", AtkExcEnt, dummyPredicate);
 
-            dmgReceiveExcludedEntitiesTemp = builder
-                    .comment("List of entities that need to receive i-frames on receiving attacks or relies on i-frames")
-                    .define("dmgReceiveExcludedEntities", DmgRecExcEnt, dummyPredicate);
+            excludedEnvironmentalSourcesTemp = builder
+                    .comment("""
+                            List of non-entity damage sources that need to give i-frames on doing damage
+                              - e.g. lava, fire, cactus, etc.
+                            """)
+                    .defineList("excludedEnvironmentalSources", DmgSrcWhtLst, dummyPredicate);
 
-            damageSrcWhitelistTemp = builder
-                    .comment("List of damage sources that need to give i-frames on doing damage (ex: lava)")
-                    .define("damageSrcWhitelist", DmgSrcWhtLst, dummyPredicate);
+            iFrameRequiredEntitiesTemp = builder
+                    .comment("""
+                            List of entities that must receive i-frames on receiving attacks
+                              - Add an entity to this list if it relies on i-frames
+                            """)
+                    .defineList("iFrameRequiredEntities", DmgRecExcEnt, dummyPredicate);
 
             builder.pop();
 
@@ -105,8 +134,8 @@ public class Config {
         THRESHOLDS.knockbackCancelThreshold = THRESHOLDS.knockbackCancelThresholdTemp.get();
 
         EXCLUSIONS.attackExcludedEntities = new HashSet<>(EXCLUSIONS.attackExcludedEntitiesTemp.get());
-        EXCLUSIONS.dmgReceiveExcludedEntities = new HashSet<>(EXCLUSIONS.dmgReceiveExcludedEntitiesTemp.get());
-        EXCLUSIONS.damageSrcWhitelist = new HashSet<>(EXCLUSIONS.damageSrcWhitelistTemp.get());
+        EXCLUSIONS.iFrameRequiredEntities = new HashSet<>(EXCLUSIONS.iFrameRequiredEntitiesTemp.get());
+        EXCLUSIONS.excludedEnvironmentalSources = new HashSet<>(EXCLUSIONS.excludedEnvironmentalSourcesTemp.get());
     }
 
     @SubscribeEvent

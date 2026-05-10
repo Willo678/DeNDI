@@ -20,7 +20,7 @@ public class ReNDI {
 
     public ReNDI(IEventBus modEventBus, ModContainer modContainer) {
         bus = modEventBus;
-        modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+        modContainer.registerConfig(ModConfig.Type.SERVER, Config.SPEC);
         NeoForge.EVENT_BUS.register(this);
     }
 
@@ -31,3 +31,4 @@ public class ReNDI {
         bus.register(new Config());
     }
 }
+

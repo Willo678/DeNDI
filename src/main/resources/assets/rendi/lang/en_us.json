@@ -1,0 +1,17 @@
+{
+  "rendi.configuration.core" : "Core",
+  "rendi.configuration.iFrameInterval" : "i-Frame Interval",
+  "rendi.configuration.excludePlayers" : "Exclude Players",
+  "rendi.configuration.excludeAllMobs" : "Exclude All Mobs",
+
+
+  "rendi.configuration.threshold" : "Thresholds",
+  "rendi.configuration.attackCancelThreshold" : "Attack Cancel Threshold",
+  "rendi.configuration.knockbackCancelThreshold" : "Knockback Cancel Threshold",
+
+
+  "rendi.configuration.exclusions" : "Exclusions",
+  "rendi.configuration.attackExcludedEntities" : "Attack Excluded Entities",
+  "rendi.configuration.excludedEnvironmentalSources" : "Excluded Non-Entity Sources",
+  "rendi.configuration.iFrameRequiredEntities" : "iFrame Required Entities"
+}
